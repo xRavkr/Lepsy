@@ -8,106 +8,18 @@ const formatTime = (seconds) => {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 };
 
-// Medication presets based on real narcolepsy meds
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
 const MED_PRESETS = {
-  xywav: {
-    id: "xywav",
-    name: "Xywav",
-    type: "oxybate",
-    morningDose: false,
-    hasFoodTimer: true,
-    foodWaitHours: 2,
-    hasAlcoholTimer: true,
-    alcoholRules: { drink1Hours: 4, drink2Hours: 6, maxDrinks: 2 },
-    hasNightDoses: true,
-    doseGapHours: 2,
-    defaultCutoffHour: 5,
-    description: "Two nighttime doses · no food within 2hr · alcohol caution",
-  },
-  xyrem: {
-    id: "xyrem",
-    name: "Xyrem",
-    type: "oxybate",
-    morningDose: false,
-    hasFoodTimer: true,
-    foodWaitHours: 2,
-    hasAlcoholTimer: true,
-    alcoholRules: { drink1Hours: 4, drink2Hours: 6, maxDrinks: 2 },
-    hasNightDoses: true,
-    doseGapHours: 2.5,
-    defaultCutoffHour: 5,
-    description: "Two nighttime doses · no food within 2hr · alcohol caution",
-  },
-  modafinil: {
-    id: "modafinil",
-    name: "Modafinil",
-    type: "stimulant",
-    morningDose: true,
-    hasFoodTimer: false,
-    hasAlcoholTimer: false,
-    hasNightDoses: false,
-    description: "Morning stimulant · take early to avoid sleep disruption",
-  },
-  armodafinil: {
-    id: "armodafinil",
-    name: "Armodafinil",
-    type: "stimulant",
-    morningDose: true,
-    hasFoodTimer: false,
-    hasAlcoholTimer: false,
-    hasNightDoses: false,
-    description: "Morning stimulant · long acting",
-  },
-  adderall: {
-    id: "adderall",
-    name: "Adderall",
-    type: "stimulant",
-    morningDose: true,
-    hasFoodTimer: false,
-    hasAlcoholTimer: false,
-    hasNightDoses: false,
-    description: "Stimulant · usually morning and afternoon",
-  },
-  vyvanse: {
-    id: "vyvanse",
-    name: "Vyvanse",
-    type: "stimulant",
-    morningDose: true,
-    hasFoodTimer: false,
-    hasAlcoholTimer: false,
-    hasNightDoses: false,
-    description: "Long-acting stimulant · take in morning",
-  },
-  sunosi: {
-    id: "sunosi",
-    name: "Sunosi",
-    type: "wake_promoter",
-    morningDose: true,
-    hasFoodTimer: false,
-    hasAlcoholTimer: false,
-    hasNightDoses: false,
-    description: "Wake-promoting agent · once daily",
-  },
-  wakix: {
-    id: "wakix",
-    name: "Wakix",
-    type: "wake_promoter",
-    morningDose: true,
-    hasFoodTimer: false,
-    hasAlcoholTimer: false,
-    hasNightDoses: false,
-    description: "Non-stimulant · once daily morning",
-  },
-  other: {
-    id: "other",
-    name: "Other",
-    type: "custom",
-    morningDose: true,
-    hasFoodTimer: false,
-    hasAlcoholTimer: false,
-    hasNightDoses: false,
-    description: "Custom medication — configure your own timers",
-  },
+  xywav: { id: "xywav", name: "Xywav", type: "oxybate", morningDose: false, hasFoodTimer: true, foodWaitHours: 2, hasNightDoses: true, doseGapHours: 2, defaultCutoffHour: 5, description: "Two nighttime doses Â· no food within 2hr" },
+  xyrem: { id: "xyrem", name: "Xyrem", type: "oxybate", morningDose: false, hasFoodTimer: true, foodWaitHours: 2, hasNightDoses: true, doseGapHours: 2.5, defaultCutoffHour: 5, description: "Two nighttime doses Â· no food within 2hr" },
+  modafinil: { id: "modafinil", name: "Modafinil", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Morning stimulant Â· take early" },
+  armodafinil: { id: "armodafinil", name: "Armodafinil", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Morning stimulant Â· long acting" },
+  adderall: { id: "adderall", name: "Adderall", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Stimulant Â· morning and afternoon" },
+  vyvanse: { id: "vyvanse", name: "Vyvanse", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Long-acting stimulant Â· take in morning" },
+  sunosi: { id: "sunosi", name: "Sunosi", type: "wake_promoter", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Wake-promoting agent Â· once daily" },
+  wakix: { id: "wakix", name: "Wakix", type: "wake_promoter", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Non-stimulant Â· once daily" },
+  other: { id: "other", name: "Other", type: "custom", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Custom medication â€” configure your own" },
 };
 
 const Icon = ({ name, size = 22 }) => {
@@ -121,6 +33,12 @@ const Icon = ({ name, size = 22 }) => {
     home: <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" />,
     settings: <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" /></>,
     arrow: <><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></>,
+    plus: <><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></>,
+    edit: <><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" /></>,
+    trash: <><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" /></>,
+    close: <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>,
+    beer: <><path d="M6 9V6a2 2 0 012-2h6a2 2 0 012 2v3" /><path d="M16 9v11a2 2 0 01-2 2H8a2 2 0 01-2-2V9" /><path d="M16 11h2a2 2 0 012 2v3a2 2 0 01-2 2h-2" /></>,
+    timer: <><circle cx="12" cy="13" r="8" /><polyline points="12 9 12 13 15 15" /><line x1="9" y1="2" x2="15" y2="2" /></>,
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -129,161 +47,183 @@ const Icon = ({ name, size = 22 }) => {
   );
 };
 
-// ─── ONBOARDING / MED SETUP ────────────────────────────────────────────────
+// â”€â”€â”€ SETUP / ONBOARDING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SetupScreen({ onComplete }) {
+  // step 0 = pick presets (multi-select) + manage custom meds, step 1 = configure a custom med
   const [step, setStep] = useState(0);
-  const [selectedMedId, setSelectedMedId] = useState(null);
+  const [selectedPresetIds, setSelectedPresetIds] = useState([]);
+  const [customMeds, setCustomMeds] = useState([]);
   const [customName, setCustomName] = useState("");
   const [customConfig, setCustomConfig] = useState({
     morningDose: true,
     hasFoodTimer: false,
     foodWaitHours: 2,
-    hasAlcoholTimer: false,
-    alcoholHours: 4,
     hasNightDoses: false,
     doseGapHours: 2,
     defaultCutoffHour: 5,
   });
 
-  const medList = Object.values(MED_PRESETS);
-
-  const finish = () => {
-    if (selectedMedId === "other") {
-      onComplete({
-        ...MED_PRESETS.other,
-        name: customName || "My Medication",
-        ...customConfig,
-        alcoholRules: customConfig.hasAlcoholTimer ? { drink1Hours: customConfig.alcoholHours, drink2Hours: customConfig.alcoholHours + 2, maxDrinks: 2 } : null,
-      });
-    } else {
-      onComplete(MED_PRESETS[selectedMedId]);
+  const togglePreset = (medId) => {
+    if (medId === "other") {
+      setStep(1);
+      return;
     }
+    setSelectedPresetIds(prev =>
+      prev.includes(medId) ? prev.filter(id => id !== medId) : [...prev, medId]
+    );
   };
+
+  const removeCustomMed = (instanceId) => {
+    setCustomMeds(prev => prev.filter(m => m.instanceId !== instanceId));
+  };
+
+  const finishCustom = () => {
+    setCustomMeds(prev => [...prev, {
+      ...MED_PRESETS.other,
+      name: customName || "My Medication",
+      ...customConfig,
+      instanceId: uid(),
+    }]);
+    setCustomName("");
+    setCustomConfig({ morningDose: true, hasFoodTimer: false, foodWaitHours: 2, hasNightDoses: false, doseGapHours: 2, defaultCutoffHour: 5 });
+    setStep(0);
+  };
+
+  const handleContinue = () => {
+    const presetMeds = selectedPresetIds.map(id => ({ ...MED_PRESETS[id], instanceId: uid() }));
+    onComplete([...presetMeds, ...customMeds]);
+  };
+
+  const totalSelected = selectedPresetIds.length + customMeds.length;
+  const presetList = Object.values(MED_PRESETS).filter(m => m.id !== "other");
 
   return (
     <div className="setup-screen">
       <div className="setup-header">
-        <div className="setup-tag">SETUP</div>
-        <h1 className="setup-title">Which medication{step === 1 && selectedMedId === "other" ? "" : "?"}</h1>
+        <div className="setup-tag">SETUP {totalSelected > 0 && `Â· ${totalSelected} SELECTED`}</div>
+        <h1 className="setup-title">
+          {step === 0 ? "Which medications?" : "Configure your medication"}
+        </h1>
         <p className="setup-sub">
-          {step === 0 ? "We'll customise your timers based on your medication." : "Configure your timers below."}
+          {step === 0
+            ? "Select all the medications you take. Tap to select more than one."
+            : "Set up timers for your custom medication."}
         </p>
       </div>
 
       {step === 0 && (
         <>
           <div className="med-list">
-            {medList.map(m => (
-              <button key={m.id} className={`med-option ${selectedMedId === m.id ? "selected" : ""}`} onClick={() => setSelectedMedId(m.id)}>
+            {presetList.map(m => {
+              const selected = selectedPresetIds.includes(m.id);
+              return (
+                <button key={m.id} className={`med-option ${selected ? "selected multi-selected" : ""}`} onClick={() => togglePreset(m.id)}>
+                  <div className="med-option-main">
+                    <span className="med-option-name">
+                      {selected && <span className="check-pill">âœ“</span>}
+                      {m.name}
+                    </span>
+                    <span className={`med-option-tag tag-${m.type}`}>{m.type.replace("_", " ")}</span>
+                  </div>
+                  <span className="med-option-desc">{m.description}</span>
+                </button>
+              );
+            })}
+
+            {customMeds.map(m => (
+              <div key={m.instanceId} className="med-option selected multi-selected">
                 <div className="med-option-main">
-                  <span className="med-option-name">{m.name}</span>
-                  <span className={`med-option-tag tag-${m.type}`}>{m.type.replace("_", " ")}</span>
+                  <span className="med-option-name">
+                    <span className="check-pill">âœ“</span>
+                    {m.name}
+                  </span>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    <span className="med-option-tag tag-custom">custom</span>
+                    <button className="icon-btn" onClick={() => removeCustomMed(m.instanceId)}>
+                      <Icon name="trash" size={14} />
+                    </button>
+                  </div>
                 </div>
                 <span className="med-option-desc">{m.description}</span>
-              </button>
+              </div>
             ))}
           </div>
-          <button className="setup-btn" disabled={!selectedMedId} onClick={() => selectedMedId === "other" ? setStep(1) : finish()}>
-            Continue <Icon name="arrow" size={18} />
+
+          <button className="add-med-btn" onClick={() => setStep(1)}>
+            <Icon name="plus" size={18} /> Add custom medication
+          </button>
+
+          <button className="setup-btn" disabled={totalSelected === 0} onClick={handleContinue}>
+            Continue to Lepsy <Icon name="arrow" size={18} />
           </button>
         </>
       )}
 
-      {step === 1 && selectedMedId === "other" && (
+      {step === 1 && (
         <div className="custom-form">
           <div className="field-group">
             <label className="field-label">Medication Name</label>
             <input className="field-input" placeholder="e.g. Sodium Oxybate" value={customName} onChange={e => setCustomName(e.target.value)} />
           </div>
 
-          <div className="toggle-row">
-            <div>
-              <p className="toggle-title">Morning Dose</p>
-              <p className="toggle-desc">Tap to log morning medication</p>
-            </div>
-            <button className={`toggle ${customConfig.morningDose ? "on" : ""}`} onClick={() => setCustomConfig(p => ({ ...p, morningDose: !p.morningDose }))}>
-              <span className="toggle-dot" />
-            </button>
-          </div>
+          <ToggleRow title="Morning Dose" desc="Tap to log morning medication" value={customConfig.morningDose} onChange={v => setCustomConfig(p => ({ ...p, morningDose: v }))} />
 
-          <div className="toggle-row">
-            <div>
-              <p className="toggle-title">Food Timer</p>
-              <p className="toggle-desc">Wait period after eating before dose</p>
-            </div>
-            <button className={`toggle ${customConfig.hasFoodTimer ? "on" : ""}`} onClick={() => setCustomConfig(p => ({ ...p, hasFoodTimer: !p.hasFoodTimer }))}>
-              <span className="toggle-dot" />
-            </button>
-          </div>
+          <ToggleRow title="Food Timer" desc="Wait period after eating before dose" value={customConfig.hasFoodTimer} onChange={v => setCustomConfig(p => ({ ...p, hasFoodTimer: v }))} />
           {customConfig.hasFoodTimer && (
-            <div className="inline-config">
-              <label>Hours to wait after food</label>
-              <select value={customConfig.foodWaitHours} onChange={e => setCustomConfig(p => ({ ...p, foodWaitHours: parseInt(e.target.value) }))}>
-                {[1, 2, 3, 4].map(h => <option key={h} value={h}>{h} hour{h > 1 ? "s" : ""}</option>)}
-              </select>
-            </div>
+            <InlineSelect label="Hours to wait after food" value={customConfig.foodWaitHours} options={[1, 2, 3, 4]} unit="hour" onChange={v => setCustomConfig(p => ({ ...p, foodWaitHours: v }))} />
           )}
 
-          <div className="toggle-row">
-            <div>
-              <p className="toggle-title">Alcohol Timer</p>
-              <p className="toggle-desc">Wait period after drinking</p>
-            </div>
-            <button className={`toggle ${customConfig.hasAlcoholTimer ? "on" : ""}`} onClick={() => setCustomConfig(p => ({ ...p, hasAlcoholTimer: !p.hasAlcoholTimer }))}>
-              <span className="toggle-dot" />
-            </button>
-          </div>
-          {customConfig.hasAlcoholTimer && (
-            <div className="inline-config">
-              <label>Hours per drink</label>
-              <select value={customConfig.alcoholHours} onChange={e => setCustomConfig(p => ({ ...p, alcoholHours: parseInt(e.target.value) }))}>
-                {[2, 3, 4, 5, 6].map(h => <option key={h} value={h}>{h} hour{h > 1 ? "s" : ""}</option>)}
-              </select>
-            </div>
-          )}
-
-          <div className="toggle-row">
-            <div>
-              <p className="toggle-title">Two Nighttime Doses</p>
-              <p className="toggle-desc">Split dose with gap between</p>
-            </div>
-            <button className={`toggle ${customConfig.hasNightDoses ? "on" : ""}`} onClick={() => setCustomConfig(p => ({ ...p, hasNightDoses: !p.hasNightDoses }))}>
-              <span className="toggle-dot" />
-            </button>
-          </div>
+          <ToggleRow title="Two Nighttime Doses" desc="Split dose with gap between" value={customConfig.hasNightDoses} onChange={v => setCustomConfig(p => ({ ...p, hasNightDoses: v }))} />
           {customConfig.hasNightDoses && (
-            <div className="inline-config">
-              <label>Gap between doses</label>
-              <select value={customConfig.doseGapHours} onChange={e => setCustomConfig(p => ({ ...p, doseGapHours: parseFloat(e.target.value) }))}>
-                {[1.5, 2, 2.5, 3, 3.5, 4].map(h => <option key={h} value={h}>{h} hours</option>)}
-              </select>
-            </div>
+            <InlineSelect label="Gap between doses" value={customConfig.doseGapHours} options={[1.5, 2, 2.5, 3, 3.5, 4]} unit="hours" onChange={v => setCustomConfig(p => ({ ...p, doseGapHours: v }))} />
           )}
 
-          <button className="setup-btn" onClick={finish}>
-            Save & Continue <Icon name="arrow" size={18} />
+          <button className="setup-btn" onClick={finishCustom}>
+            Save Medication <Icon name="arrow" size={18} />
           </button>
-          <button className="back-btn" onClick={() => setStep(0)}>← Back</button>
+          <button className="back-btn" onClick={() => setStep(0)}>â† Back</button>
         </div>
       )}
 
       <p className="setup-disclaimer">
-        Always follow your prescribing doctor's instructions. This app supports — it does not replace — medical advice.
+        Always follow your prescribing doctor's instructions. Lepsy supports â€” it does not replace â€” medical advice.
       </p>
     </div>
   );
 }
 
-// ─── HOME ──────────────────────────────────────────────────────────────────
-function HomeScreen({ setScreen, medState, logEntries, medConfig }) {
+const ToggleRow = ({ title, desc, value, onChange }) => (
+  <div className="toggle-row">
+    <div>
+      <p className="toggle-title">{title}</p>
+      <p className="toggle-desc">{desc}</p>
+    </div>
+    <button className={`toggle ${value ? "on" : ""}`} onClick={() => onChange(!value)}>
+      <span className="toggle-dot" />
+    </button>
+  </div>
+);
+
+const InlineSelect = ({ label, value, options, unit, onChange }) => (
+  <div className="inline-config">
+    <label>{label}</label>
+    <select value={value} onChange={e => onChange(parseFloat(e.target.value))}>
+      {options.map(o => <option key={o} value={o}>{o} {unit}{o !== 1 && unit !== "hours" ? "s" : ""}</option>)}
+    </select>
+  </div>
+);
+
+// â”€â”€â”€ HOME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function HomeScreen({ setScreen, medications, logEntries }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const todayLogs = logEntries.filter(e => new Date(e.time).toDateString() === new Date().toDateString());
+  const medNames = medications.map(m => m.name).join(" Â· ").toUpperCase();
 
   return (
     <div className="screen home-screen">
       <div className="home-header">
-        <div className="greeting-tag">LEPSY · {medConfig.name.toUpperCase()}</div>
+        <div className="greeting-tag">LEPSY Â· {medNames}</div>
         <h1 className="greeting">{greeting}</h1>
         <p className="subtitle">Your daily companion</p>
       </div>
@@ -293,35 +233,18 @@ function HomeScreen({ setScreen, medState, logEntries, medConfig }) {
           <span className="status-num">{todayLogs.length}</span>
           <span className="status-label">Logs today</span>
         </div>
-        {medConfig.morningDose && (
-          <>
-            <div className="status-divider" />
-            <div className="status-item">
-              <span className="status-num" style={{ color: medState.morningTaken ? "#86efac" : "#94a3b8" }}>
-                {medState.morningTaken ? "✓" : "—"}
-              </span>
-              <span className="status-label">Morning</span>
-            </div>
-          </>
-        )}
-        {medConfig.hasNightDoses && (
-          <>
-            <div className="status-divider" />
-            <div className="status-item">
-              <span className="status-num" style={{ color: medState.dose1Taken ? "#86efac" : "#94a3b8" }}>
-                {medState.dose1Taken ? "✓" : "—"}
-              </span>
-              <span className="status-label">Night dose</span>
-            </div>
-          </>
-        )}
+        <div className="status-divider" />
+        <div className="status-item">
+          <span className="status-num">{medications.length}</span>
+          <span className="status-label">Meds tracked</span>
+        </div>
       </div>
 
       <div className="quick-grid">
         <button className="quick-card primary" onClick={() => setScreen("medication")}>
           <Icon name="pill" size={28} />
-          <span className="qc-title">{medConfig.name}</span>
-          <small>Track your doses</small>
+          <span className="qc-title">Medications</span>
+          <small>Timers & doses</small>
         </button>
         <button className="quick-card" onClick={() => setScreen("log")}>
           <Icon name="log" size={28} />
@@ -356,189 +279,501 @@ function HomeScreen({ setScreen, medState, logEntries, medConfig }) {
   );
 }
 
-// ─── MEDICATION ────────────────────────────────────────────────────────────
-function MedicationScreen({ medState, setMedState, medConfig, onChangeMed }) {
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setMedState(prev => {
-        const now = { ...prev };
-        if (now.foodTimer > 0) now.foodTimer--;
-        if (now.alcoholTimer > 0) now.alcoholTimer--;
-        if (now.dose1Taken && !now.dose2Taken) now.dose1Elapsed = (now.dose1Elapsed || 0) + 1;
-        return now;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [setMedState]);
+// â”€â”€â”€ EDIT TIMER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function EditTimerModal({ timer, onSave, onClose, onDelete }) {
+  const [hours, setHours] = useState(Math.floor((timer.remainingSeconds || 0) / 3600));
+  const [minutes, setMinutes] = useState(Math.floor(((timer.remainingSeconds || 0) % 3600) / 60));
 
-  const takeMorningMed = () => setMedState(p => ({ ...p, morningTaken: true, morningTime: new Date().toISOString() }));
-  const logFood = () => setMedState(p => ({ ...p, foodTimer: medConfig.foodWaitHours * 3600, foodTime: new Date().toISOString() }));
-  const logAlcohol = () => setMedState(p => {
-    const drinks = (p.alcoholDrinks || 0) + 1;
-    const rules = medConfig.alcoholRules;
-    if (drinks > rules.maxDrinks) return { ...p, alcoholDrinks: drinks, alcoholTimer: 0, alcoholExceeded: true };
-    const hours = drinks === 1 ? rules.drink1Hours : rules.drink2Hours;
-    return { ...p, alcoholDrinks: drinks, alcoholTimer: hours * 3600, alcoholTime: new Date().toISOString() };
-  });
-  const takeDose1 = () => setMedState(p => ({ ...p, dose1Taken: true, dose1Time: new Date().toISOString(), dose1Elapsed: 0 }));
-  const takeDose2 = () => {
-    const cutoffHour = medState.cutoffHour ?? medConfig.defaultCutoffHour ?? 5;
-    const now = new Date();
-    const pastCutoff = now.getHours() >= cutoffHour && now.getHours() < 12;
-    if (pastCutoff) return;
-    setMedState(p => ({ ...p, dose2Taken: true, dose2Time: new Date().toISOString() }));
+  const save = () => {
+    onSave(hours * 3600 + minutes * 60);
+    onClose();
   };
-  const resetAll = () => setMedState({
-    morningTaken: false, foodTimer: 0, alcoholTimer: 0, alcoholDrinks: 0,
-    dose1Taken: false, dose2Taken: false, dose1Elapsed: 0, alcoholExceeded: false,
-    cutoffHour: medConfig.defaultCutoffHour ?? 5
-  });
 
-  const doseGapSeconds = (medConfig.doseGapHours ?? 2) * 3600;
-  const dose1Green = (medState.dose1Elapsed || 0) >= doseGapSeconds;
-  const cutoffHour = medState.cutoffHour ?? medConfig.defaultCutoffHour ?? 5;
-  const nowDate = new Date();
-  const pastCutoff = medState.dose1Taken && nowDate.getHours() >= cutoffHour && nowDate.getHours() < 12;
-  const bothTimersDone = medConfig.hasFoodTimer && medConfig.hasAlcoholTimer && medState.foodTimer === 0 && medState.alcoholTimer === 0 && (medState.foodTime || medState.alcoholTime) && !medState.alcoholExceeded;
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>Edit {timer.label}</h3>
+          <button className="icon-btn" onClick={onClose}><Icon name="close" size={20} /></button>
+        </div>
+        <p className="modal-sub">Adjust the remaining time on this timer</p>
+
+        <div className="time-pickers">
+          <div className="time-picker">
+            <label>Hours</label>
+            <select value={hours} onChange={e => setHours(parseInt(e.target.value))}>
+              {Array.from({ length: 13 }, (_, i) => <option key={i} value={i}>{i}</option>)}
+            </select>
+          </div>
+          <div className="time-picker">
+            <label>Minutes</label>
+            <select value={minutes} onChange={e => setMinutes(parseInt(e.target.value))}>
+              {Array.from({ length: 60 }, (_, i) => <option key={i} value={i}>{String(i).padStart(2, "0")}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <button className="submit-btn" onClick={save}>Save</button>
+        {onDelete && (
+          <button className="danger-btn" onClick={() => { onDelete(); onClose(); }}>
+            <Icon name="trash" size={16} /> Delete timer
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// â”€â”€â”€ ADD TIMER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function AddTimerModal({ onAdd, onClose, medications }) {
+  // Detect if user is on an oxybate medication (Xywav or Xyrem) for stricter alcohol rules
+  const hasOxybate = medications.some(m => m.type === "oxybate");
+
+  const [type, setType] = useState("alcohol");
+  const [name, setName] = useState("");
+  const [hours, setHours] = useState(hasOxybate ? 4 : 4);
+  const [strictMode, setStrictMode] = useState(hasOxybate); // default ON if on Xywav/Xyrem
+
+  const presets = [
+    { id: "alcohol", label: "Alcohol Timer", icon: "beer", defaultHours: 4, desc: "Track time after drinking" },
+    { id: "custom", label: "Custom Timer", icon: "timer", defaultHours: 2, desc: "Anything you want to track" },
+  ];
+
+  const handleAdd = () => {
+    const preset = presets.find(p => p.id === type);
+    const isAlcoholStrict = type === "alcohol" && strictMode;
+
+    onAdd({
+      id: uid(),
+      type,
+      label: type === "custom" ? (name || "Custom Timer") : preset.label,
+      durationSeconds: hours * 3600,
+      remainingSeconds: 0,
+      active: false,
+      drinkCount: 0,
+      // Strict mode = Xywav/Xyrem rules: 4hr â†’ 6hr â†’ exceeded after 3 drinks
+      strictMode: isAlcoholStrict,
+      drink1Hours: isAlcoholStrict ? 4 : hours,
+      drink2Hours: isAlcoholStrict ? 6 : hours + 2,
+      maxDrinks: isAlcoholStrict ? 2 : 99,
+      drinkHourIncrement: 2,
+      exceeded: false,
+    });
+    onClose();
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h3>Add Timer</h3>
+          <button className="icon-btn" onClick={onClose}><Icon name="close" size={20} /></button>
+        </div>
+
+        <p className="section-label">TIMER TYPE</p>
+        <div className="timer-type-grid">
+          {presets.map(p => (
+            <button key={p.id} className={`type-btn ${type === p.id ? "active" : ""}`} onClick={() => { setType(p.id); setHours(p.defaultHours); }}>
+              <Icon name={p.icon} size={18} />
+              <div style={{ textAlign: "left", flex: 1 }}>
+                <div style={{ fontWeight: 600 }}>{p.label}</div>
+                <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>{p.desc}</div>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {type === "custom" && (
+          <div className="field-group" style={{ marginTop: 16 }}>
+            <label className="field-label">Name your timer</label>
+            <input className="field-input" placeholder="e.g. Caffeine cutoff, Screen time" value={name} onChange={e => setName(e.target.value)} />
+          </div>
+        )}
+
+        {type === "alcohol" && hasOxybate && (
+          <div style={{ marginTop: 16 }}>
+            <ToggleRow
+              title="Xywav/Xyrem safety rules"
+              desc="1 drink â†’ 4hr Â· 2 drinks â†’ 6hr Â· 3 drinks â†’ exceeded warning"
+              value={strictMode}
+              onChange={setStrictMode}
+            />
+          </div>
+        )}
+
+        {type === "alcohol" && !strictMode && (
+          <div className="field-group" style={{ marginTop: 16 }}>
+            <label className="field-label">Hours per drink</label>
+            <select className="field-input" value={hours} onChange={e => setHours(parseInt(e.target.value))} style={{ marginBottom: 16 }}>
+              {[2, 3, 4, 5, 6, 8].map(h => <option key={h} value={h}>{h} hour{h > 1 ? "s" : ""}</option>)}
+            </select>
+          </div>
+        )}
+
+        {type === "custom" && (
+          <div className="field-group">
+            <label className="field-label">Duration (hours)</label>
+            <select className="field-input" value={hours} onChange={e => setHours(parseInt(e.target.value))} style={{ marginBottom: 16 }}>
+              {[1, 2, 3, 4, 5, 6, 8, 10, 12].map(h => <option key={h} value={h}>{h} hour{h > 1 ? "s" : ""}</option>)}
+            </select>
+          </div>
+        )}
+
+        {type === "alcohol" && strictMode && (
+          <p className="modal-info">
+            âš ï¸ Xywav and Xyrem can interact dangerously with alcohol. After your 3rd drink, the timer will warn you not to take your medication tonight.
+          </p>
+        )}
+
+        {type === "alcohol" && !strictMode && (
+          <p className="modal-info">
+            Each drink resets/extends the timer. Useful for tracking time since last drink regardless of medication.
+          </p>
+        )}
+
+        <button className="submit-btn" onClick={handleAdd}>Add Timer</button>
+      </div>
+    </div>
+  );
+}
+
+// â”€â”€â”€ MEDICATION SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function MedicationScreen({ medications, setMedications, medStates, setMedStates, customTimers, setCustomTimers, onManageMeds }) {
+  const [editingTimer, setEditingTimer] = useState(null);
+  const [showAddTimer, setShowAddTimer] = useState(false);
+
+  // Tick all timers down every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMedStates(prev => {
+        const next = { ...prev };
+        Object.keys(next).forEach(key => {
+          const s = { ...next[key] };
+          if (s.foodTimer > 0) s.foodTimer--;
+          if (s.dose1Taken && !s.dose2Taken) s.dose1Elapsed = (s.dose1Elapsed || 0) + 1;
+          next[key] = s;
+        });
+        return next;
+      });
+      setCustomTimers(prev => prev.map(t => {
+        if (t.active && t.remainingSeconds > 0) {
+          return { ...t, remainingSeconds: t.remainingSeconds - 1 };
+        }
+        return t;
+      }));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [setMedStates, setCustomTimers]);
+
+  const getState = (instanceId) => medStates[instanceId] || { morningTaken: false, foodTimer: 0, dose1Taken: false, dose2Taken: false, dose1Elapsed: 0, cutoffHour: 5 };
+
+  const updateState = (instanceId, updates) => {
+    setMedStates(prev => ({ ...prev, [instanceId]: { ...getState(instanceId), ...updates } }));
+  };
+
+  const startCustomTimer = (id) => {
+    setCustomTimers(prev => prev.map(t => t.id === id ? { ...t, active: true, remainingSeconds: t.durationSeconds, startedAt: new Date().toISOString() } : t));
+  };
+
+  const logAlcoholDrink = (id) => {
+    setCustomTimers(prev => prev.map(t => {
+      if (t.id === id) {
+        const newCount = t.drinkCount + 1;
+
+        // Strict mode (Xywav/Xyrem): hardcoded safety rules
+        if (t.strictMode) {
+          if (newCount > 2) {
+            return {
+              ...t,
+              active: true,
+              drinkCount: newCount,
+              remainingSeconds: 0,
+              exceeded: true,
+            };
+          }
+          const newDuration = newCount === 1 ? t.drink1Hours * 3600 : t.drink2Hours * 3600;
+          return {
+            ...t,
+            active: true,
+            drinkCount: newCount,
+            remainingSeconds: newDuration,
+            startedAt: t.startedAt || new Date().toISOString(),
+            exceeded: false,
+          };
+        }
+
+        // Non-strict: first drink starts timer, each additional extends
+        const additionalSeconds = newCount === 1 ? t.durationSeconds : t.drinkHourIncrement * 3600;
+        return {
+          ...t,
+          active: true,
+          drinkCount: newCount,
+          remainingSeconds: newCount === 1 ? t.durationSeconds : t.remainingSeconds + additionalSeconds,
+          startedAt: t.startedAt || new Date().toISOString(),
+        };
+      }
+      return t;
+    }));
+  };
+
+  const resetTimer = (id) => {
+    setCustomTimers(prev => prev.map(t => t.id === id ? { ...t, active: false, remainingSeconds: 0, drinkCount: 0, startedAt: null, exceeded: false } : t));
+  };
+
+  const deleteTimer = (id) => {
+    setCustomTimers(prev => prev.filter(t => t.id !== id));
+  };
+
+  const updateTimerSeconds = (id, newSeconds) => {
+    setCustomTimers(prev => prev.map(t => t.id === id ? { ...t, remainingSeconds: newSeconds, active: newSeconds > 0 } : t));
+  };
 
   return (
     <div className="screen med-screen">
       <div className="med-header-row">
         <div>
-          <h2 className="screen-title">{medConfig.name}</h2>
-          <p className="screen-sub">{medConfig.description}</p>
+          <h2 className="screen-title">Medications</h2>
+          <p className="screen-sub">{medications.length} medication{medications.length !== 1 ? "s" : ""} Â· {customTimers.length} timer{customTimers.length !== 1 ? "s" : ""}</p>
         </div>
-        <button className="change-med-btn" onClick={onChangeMed}>
+        <button className="change-med-btn" onClick={onManageMeds}>
           <Icon name="settings" size={18} />
         </button>
       </div>
 
-      {medConfig.morningDose && (
-        <div className="med-card">
-          <div className="med-card-header">
-            <Icon name="zap" size={18} />
-            <span>Morning Medication</span>
-          </div>
-          {medState.morningTaken ? (
-            <div className="taken-badge">
-              <Icon name="check" size={16} /> Taken at {new Date(medState.morningTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-            </div>
-          ) : (
-            <button className="med-btn" onClick={takeMorningMed}>Tap when taken</button>
-          )}
-        </div>
-      )}
+      {medications.map(med => {
+        const state = getState(med.instanceId);
+        const doseGapSeconds = (med.doseGapHours ?? 2) * 3600;
+        const dose1Green = (state.dose1Elapsed || 0) >= doseGapSeconds;
+        const cutoffHour = state.cutoffHour ?? med.defaultCutoffHour ?? 5;
+        const nowDate = new Date();
+        const pastCutoff = state.dose1Taken && nowDate.getHours() >= cutoffHour && nowDate.getHours() < 12;
 
-      {medConfig.hasFoodTimer && (
-        <div className="med-card">
-          <div className="med-card-header">
-            <span style={{ fontSize: 18 }}>🍽</span>
-            <span>Last Food Timer</span>
-          </div>
-          <div className={`big-timer ${medState.foodTimer === 0 && medState.foodTime ? "timer-done" : ""}`}>
-            {formatTime(medState.foodTimer)}
-          </div>
-          <p className="timer-sub">{medConfig.foodWaitHours} hour{medConfig.foodWaitHours > 1 ? "s" : ""} must pass after eating</p>
-          <button className="med-btn" onClick={logFood}>Tap when you finish eating</button>
-        </div>
-      )}
-
-      {medConfig.hasAlcoholTimer && (
-        <div className="med-card">
-          <div className="med-card-header">
-            <span style={{ fontSize: 18 }}>🍺</span>
-            <span>Alcohol Timer</span>
-          </div>
-          {medState.alcoholExceeded ? (
-            <div className="alert-badge">⚠️ Limit exceeded — do not take {medConfig.name} tonight</div>
-          ) : (
-            <>
-              <div className={`big-timer ${medState.alcoholTimer === 0 && medState.alcoholTime ? "timer-done" : ""}`}>
-                {formatTime(Math.max(0, medState.alcoholTimer))}
-              </div>
-              <p className="timer-sub">
-                {!medState.alcoholDrinks
-                  ? `1 drink → ${medConfig.alcoholRules.drink1Hours}hr · 2 drinks → ${medConfig.alcoholRules.drink2Hours}hr`
-                  : `${medState.alcoholDrinks} drink${medState.alcoholDrinks > 1 ? "s" : ""} logged`}
-              </p>
-              <button className="med-btn" onClick={logAlcohol}>Log a drink</button>
-            </>
-          )}
-        </div>
-      )}
-
-      {bothTimersDone && (
-        <div className="ready-banner">✓ Both timers complete — safe to take {medConfig.name}</div>
-      )}
-
-      {medConfig.hasNightDoses && (
-        <div className="med-card">
-          <div className="med-card-header">
-            <Icon name="moon" size={18} />
-            <span>Nighttime Doses</span>
-          </div>
-
-          <div className="dose-grid">
-            <div className="dose-block">
-              <p className="dose-label">Dose 1</p>
-              {medState.dose1Taken ? (
-                <div className="taken-badge small">✓ {new Date(medState.dose1Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
-              ) : (
-                <button className="med-btn small" onClick={takeDose1}>Tap when taken</button>
-              )}
+        return (
+          <div key={med.instanceId} className="med-group">
+            <div className="med-group-header">
+              <span className="med-group-name">{med.name}</span>
+              <span className={`med-option-tag tag-${med.type}`}>{med.type.replace("_", " ")}</span>
             </div>
 
-            {medState.dose1Taken && !medState.dose2Taken && (
-              <div className="dose-block">
-                <p className="dose-label">Time since dose 1</p>
-                <div className={`elapsed-timer ${dose1Green ? "elapsed-green" : ""}`}>
-                  {formatTime(medState.dose1Elapsed || 0)}
+            {med.morningDose && (
+              <div className="med-card">
+                <div className="med-card-header">
+                  <Icon name="zap" size={18} />
+                  <span>Morning Dose</span>
                 </div>
-                {dose1Green ? <p className="dose-sub green">✓ Dose 2 window open</p> : <p className="dose-sub">Wait {medConfig.doseGapHours}hr</p>}
+                {state.morningTaken ? (
+                  <div className="taken-badge">
+                    <Icon name="check" size={16} /> Taken at {new Date(state.morningTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    <button className="inline-edit" onClick={() => updateState(med.instanceId, { morningTaken: false, morningTime: null })}>Undo</button>
+                  </div>
+                ) : (
+                  <button className="med-btn" onClick={() => updateState(med.instanceId, { morningTaken: true, morningTime: new Date().toISOString() })}>Tap when taken</button>
+                )}
+              </div>
+            )}
+
+            {med.hasFoodTimer && (
+              <div className="med-card">
+                <div className="med-card-header">
+                  <span style={{ fontSize: 18 }}>ðŸ½</span>
+                  <span>Food Timer</span>
+                  {state.foodTimer > 0 && (
+                    <button className="inline-edit-icon" onClick={() => setEditingTimer({
+                      type: "food",
+                      instanceId: med.instanceId,
+                      label: "Food Timer",
+                      remainingSeconds: state.foodTimer,
+                    })}>
+                      <Icon name="edit" size={14} />
+                    </button>
+                  )}
+                </div>
+                <div className={`big-timer ${state.foodTimer === 0 && state.foodTime ? "timer-done" : ""}`}>
+                  {formatTime(state.foodTimer)}
+                </div>
+                <p className="timer-sub">{med.foodWaitHours} hour{med.foodWaitHours > 1 ? "s" : ""} must pass after eating</p>
+                <button className="med-btn" onClick={() => updateState(med.instanceId, { foodTimer: med.foodWaitHours * 3600, foodTime: new Date().toISOString() })}>
+                  Tap when you finish eating
+                </button>
+              </div>
+            )}
+
+            {med.hasNightDoses && (
+              <div className="med-card">
+                <div className="med-card-header">
+                  <Icon name="moon" size={18} />
+                  <span>Nighttime Doses</span>
+                </div>
+
+                <div className="dose-grid">
+                  <div className="dose-block">
+                    <p className="dose-label">Dose 1</p>
+                    {state.dose1Taken ? (
+                      <div className="taken-badge small">âœ“ {new Date(state.dose1Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                    ) : (
+                      <button className="med-btn small" onClick={() => updateState(med.instanceId, { dose1Taken: true, dose1Time: new Date().toISOString(), dose1Elapsed: 0 })}>Tap when taken</button>
+                    )}
+                  </div>
+
+                  {state.dose1Taken && !state.dose2Taken && (
+                    <div className="dose-block">
+                      <p className="dose-label">Time since dose 1</p>
+                      <div className={`elapsed-timer ${dose1Green ? "elapsed-green" : ""}`}>
+                        {formatTime(state.dose1Elapsed || 0)}
+                      </div>
+                      {dose1Green ? <p className="dose-sub green">âœ“ Dose 2 window open</p> : <p className="dose-sub">Wait {med.doseGapHours}hr</p>}
+                    </div>
+                  )}
+                </div>
+
+                {state.dose1Taken && !state.dose2Taken && (
+                  <div className="dose-grid" style={{ marginTop: 14 }}>
+                    <div className="dose-block">
+                      <p className="dose-label">Dose 2</p>
+                      {pastCutoff ? (
+                        <div className="alert-badge small">â›” Past {String(cutoffHour).padStart(2, "0")}:00</div>
+                      ) : (
+                        <button className="med-btn small" onClick={() => updateState(med.instanceId, { dose2Taken: true, dose2Time: new Date().toISOString() })} disabled={!dose1Green}>
+                          {dose1Green ? "Tap when taken" : "Not ready"}
+                        </button>
+                      )}
+                    </div>
+                    <div className="dose-block">
+                      <p className="dose-label">Cutoff time</p>
+                      <select className="cutoff-select" value={cutoffHour} onChange={e => updateState(med.instanceId, { cutoffHour: parseInt(e.target.value) })}>
+                        {[0, 1, 2, 3, 4, 5, 6, 7].map(h => <option key={h} value={h}>{String(h).padStart(2, "0")}:00</option>)}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {state.dose2Taken && (
+                  <div className="taken-badge" style={{ marginTop: 12 }}>âœ“ Dose 2 taken at {new Date(state.dose2Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                )}
+              </div>
+            )}
+
+            {!med.morningDose && !med.hasFoodTimer && !med.hasNightDoses && (
+              <div className="med-card" style={{ textAlign: "center", padding: 20 }}>
+                <p style={{ color: "#64748b", fontSize: 13 }}>No timers configured for this medication.</p>
               </div>
             )}
           </div>
+        );
+      })}
 
-          {medState.dose1Taken && !medState.dose2Taken && (
-            <div className="dose-grid" style={{ marginTop: 14 }}>
-              <div className="dose-block">
-                <p className="dose-label">Dose 2</p>
-                {pastCutoff ? (
-                  <div className="alert-badge small">⛔ Past {String(cutoffHour).padStart(2, "0")}:00</div>
-                ) : (
-                  <button className="med-btn small" onClick={takeDose2} disabled={!dose1Green}>
-                    {dose1Green ? "Tap when taken" : "Not ready"}
+      {/* Custom + Alcohol Timers */}
+      {customTimers.length > 0 && (
+        <div className="med-group">
+          <div className="med-group-header">
+            <span className="med-group-name">Other Timers</span>
+          </div>
+
+          {customTimers.map(timer => (
+            <div key={timer.id} className="med-card">
+              <div className="med-card-header">
+                <Icon name={timer.type === "alcohol" ? "beer" : "timer"} size={18} />
+                <span>{timer.label}</span>
+                <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+                  {timer.active && !timer.exceeded && (
+                    <button className="inline-edit-icon" onClick={() => setEditingTimer({
+                      ...timer,
+                      onUpdate: (s) => updateTimerSeconds(timer.id, s),
+                      onDelete: () => deleteTimer(timer.id),
+                    })}>
+                      <Icon name="edit" size={14} />
+                    </button>
+                  )}
+                  <button className="inline-edit-icon" onClick={() => deleteTimer(timer.id)}>
+                    <Icon name="trash" size={14} />
                   </button>
-                )}
+                </div>
               </div>
-              <div className="dose-block">
-                <p className="dose-label">Cutoff time</p>
-                <select className="cutoff-select" value={cutoffHour} onChange={e => setMedState(p => ({ ...p, cutoffHour: parseInt(e.target.value) }))}>
-                  {[0, 1, 2, 3, 4, 5, 6, 7].map(h => <option key={h} value={h}>{String(h).padStart(2, "0")}:00</option>)}
-                </select>
-              </div>
+
+              {timer.exceeded ? (
+                <div className="alert-badge" style={{ marginBottom: 14 }}>
+                  âš ï¸ Alcohol limit exceeded â€” do not take Xywav/Xyrem tonight
+                </div>
+              ) : (
+                <div className={`big-timer ${timer.remainingSeconds === 0 && timer.active ? "timer-done" : ""}`}>
+                  {formatTime(timer.remainingSeconds)}
+                </div>
+              )}
+
+              {timer.type === "alcohol" ? (
+                <>
+                  {!timer.exceeded && (
+                    <p className="timer-sub">
+                      {timer.strictMode
+                        ? (timer.drinkCount === 0
+                            ? "Xywav/Xyrem rules: 1 drink â†’ 4hr Â· 2 drinks â†’ 6hr Â· 3 = stop"
+                            : `${timer.drinkCount} drink${timer.drinkCount > 1 ? "s" : ""} Â· ${timer.drinkCount === 1 ? timer.drink1Hours : timer.drink2Hours}hr timer`)
+                        : (timer.drinkCount === 0
+                            ? `Each drink adds ${timer.drinkHourIncrement}hr Â· first drink starts ${timer.durationSeconds / 3600}hr`
+                            : `${timer.drinkCount} drink${timer.drinkCount > 1 ? "s" : ""} logged`)}
+                    </p>
+                  )}
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {!timer.exceeded && (
+                      <button className="med-btn" style={{ flex: 1 }} onClick={() => logAlcoholDrink(timer.id)}>
+                        Log a drink
+                      </button>
+                    )}
+                    {(timer.active || timer.exceeded) && (
+                      <button className="reset-btn" style={{ flex: timer.exceeded ? 1 : "0 0 auto", margin: 0, padding: "12px 16px" }} onClick={() => resetTimer(timer.id)}>
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="timer-sub">{timer.durationSeconds / 3600} hour countdown</p>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {!timer.active ? (
+                      <button className="med-btn" style={{ flex: 1 }} onClick={() => startCustomTimer(timer.id)}>Start timer</button>
+                    ) : (
+                      <button className="reset-btn" style={{ flex: 1, margin: 0 }} onClick={() => resetTimer(timer.id)}>Reset timer</button>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
-          )}
-
-          {medState.dose2Taken && (
-            <div className="taken-badge" style={{ marginTop: 12 }}>✓ Dose 2 taken at {new Date(medState.dose2Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
-          )}
+          ))}
         </div>
       )}
 
-      {!medConfig.morningDose && !medConfig.hasFoodTimer && !medConfig.hasAlcoholTimer && !medConfig.hasNightDoses && (
-        <div className="empty-med-state">
-          <p>No timers configured for {medConfig.name}.</p>
-          <button className="med-btn" onClick={onChangeMed}>Configure medication</button>
-        </div>
+      <button className="add-timer-btn" onClick={() => setShowAddTimer(true)}>
+        <Icon name="plus" size={18} /> Add timer
+      </button>
+
+      {editingTimer && (
+        <EditTimerModal
+          timer={editingTimer}
+          onSave={(seconds) => {
+            if (editingTimer.type === "food") {
+              updateState(editingTimer.instanceId, { foodTimer: seconds });
+            } else if (editingTimer.onUpdate) {
+              editingTimer.onUpdate(seconds);
+            }
+          }}
+          onDelete={editingTimer.onDelete}
+          onClose={() => setEditingTimer(null)}
+        />
       )}
 
-      <button className="reset-btn" onClick={resetAll}>Reset all timers</button>
+      {showAddTimer && (
+        <AddTimerModal
+          onAdd={(timer) => setCustomTimers(prev => [...prev, timer])}
+          onClose={() => setShowAddTimer(false)}
+          medications={medications}
+        />
+      )}
     </div>
   );
 }
 
-// ─── LOG ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ LOG SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LogScreen({ logEntries, setLogEntries }) {
   const [type, setType] = useState("sleep_attack");
   const [notes, setNotes] = useState("");
@@ -574,7 +809,7 @@ function LogScreen({ logEntries, setLogEntries }) {
         ))}
       </div>
 
-      <p className="section-label">SEVERITY (1–5)</p>
+      <p className="section-label">SEVERITY (1â€“5)</p>
       <div className="severity-row">
         {[1, 2, 3, 4, 5].map(n => (
           <button key={n} className={`sev-btn ${severity === n ? "active" : ""}`} onClick={() => setSeverity(n)}>{n}</button>
@@ -613,23 +848,20 @@ function LogScreen({ logEntries, setLogEntries }) {
   );
 }
 
-// ─── MEDICAL ID ────────────────────────────────────────────────────────────
-// Simple QR code generator (pure JS, no dependencies)
-// Uses a basic implementation suitable for short emergency text
-function generateQRCode(text, size = 200) {
-  // We'll use a free public QR code rendering API as a fallback approach.
-  // For a real production build, swap this for a local library like qrcode.js
+// â”€â”€â”€ MEDICAL ID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+function generateQRCode(text, size = 240) {
   const encoded = encodeURIComponent(text);
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}&bgcolor=ffffff&color=0f172a&margin=2`;
 }
 
-function MedicalIDScreen({ medConfig }) {
+function MedicalIDScreen({ medications }) {
   const [editing, setEditing] = useState(false);
   const [showQR, setShowQR] = useState(false);
+  const medListString = medications.map(m => m.name).join(", ");
   const [info, setInfo] = useState({
     name: "",
     condition: "",
-    medications: medConfig.name === "Other" ? "" : medConfig.name,
+    medications: medListString,
     emergencyName: "",
     emergencyPhone: "",
     notes: "",
@@ -641,12 +873,11 @@ function MedicalIDScreen({ medConfig }) {
     { key: "medications", label: "Medications", placeholder: "List your medications and doses" },
     { key: "emergencyName", label: "Emergency Contact", placeholder: "Contact name" },
     { key: "emergencyPhone", label: "Emergency Phone", placeholder: "Phone number" },
-    { key: "notes", label: "Notes for first responders", placeholder: "Anything responders should know (e.g. how to recognise cataplexy)", textarea: true },
+    { key: "notes", label: "Notes for first responders", placeholder: "Anything responders should know", textarea: true },
   ];
 
   const hasAnyInfo = Object.values(info).some(v => v && v.trim().length > 0);
 
-  // Build the QR payload — plain text, scannable by any phone camera
   const qrPayload = [
     info.name && `Name: ${info.name}`,
     info.condition && `Condition: ${info.condition}`,
@@ -674,7 +905,7 @@ function MedicalIDScreen({ medConfig }) {
 
       <div className="disclaimer">
         <strong style={{ color: "#cbd5e1" }}>How to make this useful in a real emergency:</strong><br /><br />
-        First responders won't open this app on a locked phone. Generate the QR code below and print it on a wallet card, bracelet, or sticker on your phone case. Anyone can scan it with their phone camera — no app required.
+        First responders won't open this app on a locked phone. Generate the QR code below and print it on a wallet card, bracelet, or sticker on your phone case. Anyone can scan it with their phone camera â€” no app required.
       </div>
 
       {!editing && !showQR && (
@@ -728,7 +959,7 @@ function MedicalIDScreen({ medConfig }) {
             Download QR Code
           </button>
           <button className="back-btn-medid" onClick={() => setShowQR(false)}>
-            ← Back to Medical ID
+            â† Back to Medical ID
           </button>
         </div>
       )}
@@ -736,7 +967,7 @@ function MedicalIDScreen({ medConfig }) {
   );
 }
 
-// ─── NAP ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ NAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function NapScreen({ logEntries, setLogEntries }) {
   const [napStart, setNapStart] = useState(null);
   const [napElapsed, setNapElapsed] = useState(0);
@@ -767,16 +998,16 @@ function NapScreen({ logEntries, setLogEntries }) {
       <div className="nap-card">
         {!napStart ? (
           <>
-            <div className="nap-state-icon">🌙</div>
+            <div className="nap-state-icon">ðŸŒ™</div>
             <p className="nap-state-text">{napSaved ? "Nap saved" : "Ready when you are"}</p>
             <button className="nap-btn start" onClick={startNap}>Start Nap</button>
           </>
         ) : (
           <>
-            <div className="nap-state-icon pulsing">😴</div>
+            <div className="nap-state-icon pulsing">ðŸ˜´</div>
             <p className="nap-state-text">Resting</p>
             <div className="nap-timer">{formatTime(napElapsed)}</div>
-            <p className="section-label" style={{ textAlign: "center", marginTop: 18 }}>HOW DO YOU FEEL? (1–5)</p>
+            <p className="section-label" style={{ textAlign: "center", marginTop: 18 }}>HOW DO YOU FEEL? (1â€“5)</p>
             <div className="severity-row" style={{ justifyContent: "center" }}>
               {[1, 2, 3, 4, 5].map(n => (
                 <button key={n} className={`sev-btn ${feeling === n ? "active" : ""}`} onClick={() => setFeeling(n)}>{n}</button>
@@ -809,24 +1040,22 @@ function NapScreen({ logEntries, setLogEntries }) {
   );
 }
 
-// ─── ROOT APP ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ ROOT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function App() {
-  const [medConfig, setMedConfig] = useState(null);
+  const [medications, setMedications] = useState(null);
   const [screen, setScreen] = useState("home");
-  const [medState, setMedState] = useState({
-    morningTaken: false, foodTimer: 0, alcoholTimer: 0, alcoholDrinks: 0,
-    dose1Taken: false, dose2Taken: false, dose1Elapsed: 0, alcoholExceeded: false, cutoffHour: 5
-  });
+  const [medStates, setMedStates] = useState({});
+  const [customTimers, setCustomTimers] = useState([]);
   const [logEntries, setLogEntries] = useState([]);
+  const [managingMeds, setManagingMeds] = useState(false);
 
-  const handleMedConfigChange = (newConfig) => {
-    setMedConfig(newConfig);
-    setMedState({
-      morningTaken: false, foodTimer: 0, alcoholTimer: 0, alcoholDrinks: 0,
-      dose1Taken: false, dose2Taken: false, dose1Elapsed: 0, alcoholExceeded: false,
-      cutoffHour: newConfig.defaultCutoffHour ?? 5
+  const handleSetupComplete = (meds) => {
+    setMedications(meds);
+    const states = {};
+    meds.forEach(m => {
+      states[m.instanceId] = { morningTaken: false, foodTimer: 0, dose1Taken: false, dose2Taken: false, dose1Elapsed: 0, cutoffHour: m.defaultCutoffHour ?? 5 };
     });
-    setScreen("home");
+    setMedStates(states);
   };
 
   const tabs = [
@@ -848,19 +1077,15 @@ export default function App() {
         .app-frame {
           min-height: 100vh;
           background: radial-gradient(ellipse at top, #1e293b 0%, #0f172a 60%, #020617 100%);
-          display: flex;
-          justify-content: center;
+          display: flex; justify-content: center;
         }
 
         .phone {
-          width: 100%;
-          max-width: 440px;
+          width: 100%; max-width: 440px;
           background: #0a0f1c;
-          min-height: 100vh;
-          position: relative;
+          min-height: 100vh; position: relative;
           color: #e2e8f0;
-          display: flex;
-          flex-direction: column;
+          display: flex; flex-direction: column;
           padding-bottom: 88px;
           background-image:
             radial-gradient(ellipse 600px 400px at 50% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 70%),
@@ -874,13 +1099,8 @@ export default function App() {
         .setup-header { margin-bottom: 28px; }
         .setup-tag { font-size: 10px; letter-spacing: 0.18em; color: #818cf8; font-weight: 600; margin-bottom: 12px; }
         .setup-title {
-          font-family: 'Fraunces', serif;
-          font-style: italic;
-          font-weight: 400;
-          font-size: 36px;
-          line-height: 1.1;
-          color: #f1f5f9;
-          margin-bottom: 8px;
+          font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+          font-size: 36px; line-height: 1.1; color: #f1f5f9; margin-bottom: 8px;
         }
         .setup-sub { color: #64748b; font-size: 14px; }
 
@@ -890,19 +1110,39 @@ export default function App() {
           border: 1px solid rgba(148, 163, 184, 0.1);
           border-radius: 14px;
           padding: 14px 16px;
-          text-align: left;
-          cursor: pointer;
+          text-align: left; cursor: pointer;
           color: #e2e8f0;
           display: flex; flex-direction: column; gap: 6px;
-          font-family: inherit;
-          transition: all 0.15s;
+          font-family: inherit; transition: all 0.15s;
         }
         .med-option:hover { border-color: rgba(129, 140, 248, 0.3); }
         .med-option.selected {
           background: rgba(129, 140, 248, 0.15);
           border-color: rgba(129, 140, 248, 0.5);
         }
-        .med-option-main { display: flex; align-items: center; justify-content: space-between; }
+        .med-option.multi-selected {
+          background: rgba(134, 239, 172, 0.08);
+          border-color: rgba(134, 239, 172, 0.4);
+        }
+        .check-pill {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px; height: 20px;
+          border-radius: 50%;
+          background: #86efac;
+          color: #0f172a;
+          font-size: 12px;
+          font-weight: 700;
+          margin-right: 8px;
+          flex-shrink: 0;
+        }
+        .med-option.added {
+          background: rgba(134, 239, 172, 0.06);
+          border-color: rgba(134, 239, 172, 0.25);
+          cursor: default;
+        }
+        .med-option-main { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .med-option-name { font-weight: 600; font-size: 16px; color: #f1f5f9; }
         .med-option-tag {
           font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -914,19 +1154,21 @@ export default function App() {
         .tag-custom { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; }
         .med-option-desc { font-size: 12px; color: #64748b; line-height: 1.4; }
 
+        .icon-btn {
+          background: none; border: none; color: #64748b;
+          padding: 6px; cursor: pointer; border-radius: 6px;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .icon-btn:hover { color: #fda4af; background: rgba(251, 113, 133, 0.1); }
+
         .setup-btn {
           width: 100%;
           background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
           color: #0f172a;
-          padding: 16px;
-          border: none;
-          border-radius: 14px;
-          font-size: 15px;
-          font-weight: 700;
-          cursor: pointer;
+          padding: 16px; border: none; border-radius: 14px;
+          font-size: 15px; font-weight: 700; cursor: pointer;
           display: flex; align-items: center; gap: 8px; justify-content: center;
-          font-family: inherit;
-          margin-top: auto;
+          font-family: inherit; margin-top: 16px;
         }
         .setup-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -936,6 +1178,20 @@ export default function App() {
           font-size: 13px; cursor: pointer; font-family: inherit;
           align-self: center;
         }
+
+        .add-med-btn {
+          width: 100%;
+          background: transparent;
+          border: 1px dashed rgba(148, 163, 184, 0.3);
+          color: #cbd5e1;
+          padding: 14px;
+          border-radius: 14px;
+          font-size: 14px; font-weight: 600;
+          cursor: pointer; font-family: inherit;
+          display: flex; align-items: center; gap: 8px; justify-content: center;
+          margin-bottom: 8px;
+        }
+        .add-med-btn:hover { border-color: rgba(129, 140, 248, 0.5); color: #c7d2fe; }
 
         .setup-disclaimer {
           font-size: 11px; color: #64748b; line-height: 1.5;
@@ -958,13 +1214,12 @@ export default function App() {
           background: rgba(148, 163, 184, 0.2);
           border-radius: 13px;
           border: none; cursor: pointer;
-          position: relative;
-          transition: background 0.2s;
+          position: relative; transition: background 0.2s;
+          flex-shrink: 0;
         }
         .toggle.on { background: #818cf8; }
         .toggle-dot {
-          position: absolute;
-          top: 3px; left: 3px;
+          position: absolute; top: 3px; left: 3px;
           width: 20px; height: 20px;
           background: white; border-radius: 50%;
           transition: transform 0.2s;
@@ -982,10 +1237,8 @@ export default function App() {
           background: rgba(30, 41, 59, 0.8);
           border: 1px solid rgba(148, 163, 184, 0.15);
           color: #e2e8f0;
-          padding: 6px 10px;
-          border-radius: 8px;
-          font-size: 12px;
-          font-family: inherit;
+          padding: 6px 10px; border-radius: 8px;
+          font-size: 12px; font-family: inherit;
         }
 
         /* HOME */
@@ -1020,8 +1273,7 @@ export default function App() {
           text-align: left;
           display: flex; flex-direction: column; gap: 8px;
           color: #e2e8f0; cursor: pointer;
-          transition: all 0.2s;
-          font-family: inherit;
+          transition: all 0.2s; font-family: inherit;
         }
         .quick-card:hover { background: rgba(30, 41, 59, 0.7); border-color: rgba(129, 140, 248, 0.3); transform: translateY(-1px); }
         .quick-card.primary {
@@ -1033,10 +1285,7 @@ export default function App() {
         .qc-title { font-weight: 600; font-size: 15px; color: #f1f5f9; }
         .quick-card small { font-size: 11px; color: #64748b; }
 
-        .section-label {
-          font-size: 10px; letter-spacing: 0.18em; color: #64748b;
-          font-weight: 600; margin-bottom: 12px; margin-top: 4px;
-        }
+        .section-label { font-size: 10px; letter-spacing: 0.18em; color: #64748b; font-weight: 600; margin-bottom: 12px; margin-top: 4px; }
         .recent-section { margin-top: 8px; }
         .log-pill {
           display: flex; align-items: center; gap: 12px;
@@ -1065,12 +1314,25 @@ export default function App() {
         }
         .change-med-btn:hover { color: #c7d2fe; border-color: rgba(129, 140, 248, 0.3); }
 
+        /* MED GROUPS */
+        .med-group { margin-bottom: 28px; }
+        .med-group-header {
+          display: flex; align-items: center; gap: 10px;
+          margin-bottom: 12px; padding: 0 4px;
+        }
+        .med-group-name {
+          font-family: 'Fraunces', serif;
+          font-size: 20px;
+          font-style: italic;
+          color: #f1f5f9;
+        }
+
         .med-card {
           background: rgba(30, 41, 59, 0.45);
           border: 1px solid rgba(148, 163, 184, 0.08);
           border-radius: 20px;
           padding: 20px;
-          margin-bottom: 14px;
+          margin-bottom: 12px;
           backdrop-filter: blur(8px);
         }
         .med-card-header {
@@ -1079,6 +1341,22 @@ export default function App() {
           margin-bottom: 14px; letter-spacing: 0.02em;
         }
         .med-card-header svg { color: #a5b4fc; }
+        .inline-edit-icon {
+          background: rgba(148, 163, 184, 0.1);
+          border: none;
+          color: #94a3b8;
+          padding: 6px; border-radius: 8px;
+          cursor: pointer;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .inline-edit-icon:hover { color: #c7d2fe; background: rgba(129, 140, 248, 0.15); }
+        .inline-edit {
+          background: none; border: none; color: #818cf8;
+          font-size: 12px; cursor: pointer; margin-left: 6px;
+          font-family: inherit;
+        }
+        .inline-edit:hover { text-decoration: underline; }
+
         .big-timer {
           font-family: 'Fraunces', serif;
           font-size: 44px; font-weight: 300;
@@ -1124,23 +1402,6 @@ export default function App() {
         }
         .alert-badge.small { padding: 9px; font-size: 12px; }
 
-        .ready-banner {
-          background: linear-gradient(90deg, rgba(134, 239, 172, 0.18), rgba(134, 239, 172, 0.08));
-          border: 1px solid rgba(134, 239, 172, 0.35);
-          color: #86efac;
-          padding: 16px;
-          border-radius: 14px;
-          text-align: center;
-          font-size: 14px; font-weight: 600;
-          margin-bottom: 14px;
-        }
-
-        .empty-med-state {
-          text-align: center; padding: 40px 20px;
-          color: #64748b;
-        }
-        .empty-med-state p { margin-bottom: 16px; font-size: 14px; }
-
         .dose-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .dose-block {
           background: rgba(15, 23, 42, 0.5);
@@ -1165,17 +1426,100 @@ export default function App() {
           font-size: 14px; font-family: inherit;
         }
 
+        .add-timer-btn {
+          width: 100%;
+          background: linear-gradient(135deg, rgba(129, 140, 248, 0.1) 0%, rgba(168, 85, 247, 0.08) 100%);
+          border: 1px dashed rgba(129, 140, 248, 0.4);
+          color: #c7d2fe;
+          padding: 16px; border-radius: 14px;
+          font-size: 14px; font-weight: 600;
+          cursor: pointer; font-family: inherit;
+          display: flex; align-items: center; gap: 8px; justify-content: center;
+          margin-top: 8px;
+        }
+        .add-timer-btn:hover { border-color: rgba(129, 140, 248, 0.7); background: rgba(129, 140, 248, 0.15); }
+
         .reset-btn {
           width: 100%;
           background: transparent;
-          border: 1px solid rgba(148, 163, 184, 0.15);
-          color: #64748b;
+          border: 1px solid rgba(148, 163, 184, 0.2);
+          color: #94a3b8;
           padding: 12px; border-radius: 12px;
-          font-size: 12px; cursor: pointer;
+          font-size: 13px; font-weight: 600; cursor: pointer;
           margin-top: 8px; font-family: inherit;
         }
-        .reset-btn:hover { color: #cbd5e1; border-color: rgba(148, 163, 184, 0.3); }
+        .reset-btn:hover { color: #cbd5e1; border-color: rgba(148, 163, 184, 0.4); }
 
+        /* MODAL */
+        .modal-overlay {
+          position: fixed; inset: 0;
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(8px);
+          display: flex; align-items: flex-end; justify-content: center;
+          z-index: 200;
+          animation: fadeIn 0.2s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); } to { transform: translateY(0); } }
+        .modal {
+          background: #0f172a;
+          border-top-left-radius: 24px;
+          border-top-right-radius: 24px;
+          width: 100%; max-width: 440px;
+          padding: 22px;
+          max-height: 85vh; overflow-y: auto;
+          animation: slideUp 0.25s;
+        }
+        .modal-header {
+          display: flex; align-items: center; justify-content: space-between;
+          margin-bottom: 8px;
+        }
+        .modal-header h3 {
+          font-family: 'Fraunces', serif; font-style: italic;
+          font-size: 22px; color: #f1f5f9; font-weight: 400;
+        }
+        .modal-sub { color: #64748b; font-size: 13px; margin-bottom: 20px; }
+        .modal-info {
+          background: rgba(129, 140, 248, 0.08);
+          border: 1px solid rgba(129, 140, 248, 0.2);
+          color: #cbd5e1;
+          padding: 12px; border-radius: 12px;
+          font-size: 12px; line-height: 1.5;
+          margin-bottom: 16px;
+        }
+        .time-pickers { display: flex; gap: 12px; margin-bottom: 20px; }
+        .time-picker { flex: 1; }
+        .time-picker label {
+          display: block; font-size: 11px;
+          letter-spacing: 0.1em; color: #64748b;
+          text-transform: uppercase; font-weight: 600;
+          margin-bottom: 8px;
+        }
+        .time-picker select {
+          width: 100%;
+          background: rgba(30, 41, 59, 0.8);
+          border: 1px solid rgba(148, 163, 184, 0.15);
+          color: #e2e8f0;
+          padding: 14px; border-radius: 12px;
+          font-size: 18px; text-align: center;
+          font-family: 'Fraunces', serif;
+        }
+
+        .timer-type-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+
+        .danger-btn {
+          width: 100%;
+          background: transparent;
+          border: 1px solid rgba(251, 113, 133, 0.3);
+          color: #fda4af;
+          padding: 12px; border-radius: 12px;
+          font-size: 13px; font-weight: 600; cursor: pointer;
+          font-family: inherit; margin-top: 10px;
+          display: flex; align-items: center; gap: 6px; justify-content: center;
+        }
+        .danger-btn:hover { background: rgba(251, 113, 133, 0.1); }
+
+        /* LOG */
         .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
         .type-btn {
           background: rgba(30, 41, 59, 0.4);
@@ -1237,6 +1581,7 @@ export default function App() {
         .entry-time { font-size: 11px; color: #64748b; }
         .entry-notes { font-size: 13px; color: #94a3b8; margin-top: 8px; line-height: 1.5; }
 
+        /* MEDICAL ID */
         .medid-header { text-align: center; margin-bottom: 18px; }
         .medid-badge {
           display: inline-block;
@@ -1295,23 +1640,18 @@ export default function App() {
         }
         .qr-image { display: block; width: 240px; height: 240px; }
         .qr-instructions {
-          font-size: 13px;
-          color: #94a3b8;
-          line-height: 1.6;
-          text-align: center;
-          margin-bottom: 22px;
-          padding: 0 8px;
+          font-size: 13px; color: #94a3b8;
+          line-height: 1.6; text-align: center;
+          margin-bottom: 22px; padding: 0 8px;
         }
         .back-btn-medid {
-          background: none; border: none;
-          color: #64748b;
-          padding: 12px;
-          font-size: 13px; cursor: pointer;
-          font-family: inherit;
-          width: 100%;
+          background: none; border: none; color: #64748b;
+          padding: 12px; font-size: 13px; cursor: pointer;
+          font-family: inherit; width: 100%;
         }
         .back-btn-medid:hover { color: #cbd5e1; }
 
+        /* NAP */
         .nap-card {
           background: linear-gradient(180deg, rgba(167, 139, 250, 0.1) 0%, rgba(30, 41, 59, 0.4) 100%);
           border: 1px solid rgba(167, 139, 250, 0.2);
@@ -1338,6 +1678,7 @@ export default function App() {
         .nap-btn.start { background: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%); color: #0f172a; }
         .nap-btn.end { background: rgba(251, 113, 133, 0.15); border: 1px solid rgba(251, 113, 133, 0.4); color: #fda4af; }
 
+        /* TAB BAR */
         .tab-bar {
           position: fixed;
           bottom: 0; left: 50%;
@@ -1366,14 +1707,18 @@ export default function App() {
 
       <div className="app-frame">
         <div className="phone">
-          {!medConfig ? (
-            <SetupScreen onComplete={handleMedConfigChange} />
+          {!medications || managingMeds ? (
+            <SetupScreen onComplete={(meds) => {
+              handleSetupComplete(meds);
+              setManagingMeds(false);
+              setScreen("home");
+            }} />
           ) : (
             <>
-              {screen === "home" && <HomeScreen setScreen={setScreen} medState={medState} logEntries={logEntries} medConfig={medConfig} />}
-              {screen === "medication" && <MedicationScreen medState={medState} setMedState={setMedState} medConfig={medConfig} onChangeMed={() => setMedConfig(null)} />}
+              {screen === "home" && <HomeScreen setScreen={setScreen} medications={medications} logEntries={logEntries} />}
+              {screen === "medication" && <MedicationScreen medications={medications} setMedications={setMedications} medStates={medStates} setMedStates={setMedStates} customTimers={customTimers} setCustomTimers={setCustomTimers} onManageMeds={() => setManagingMeds(true)} />}
               {screen === "log" && <LogScreen logEntries={logEntries} setLogEntries={setLogEntries} />}
-              {screen === "medicalid" && <MedicalIDScreen medConfig={medConfig} />}
+              {screen === "medicalid" && <MedicalIDScreen medications={medications} />}
               {screen === "nap" && <NapScreen logEntries={logEntries} setLogEntries={setLogEntries} />}
 
               <div className="tab-bar">
