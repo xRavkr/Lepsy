@@ -11,15 +11,15 @@ const formatTime = (seconds) => {
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 const MED_PRESETS = {
-  xywav: { id: "xywav", name: "Xywav", type: "oxybate", morningDose: false, hasFoodTimer: true, foodWaitHours: 2, hasNightDoses: true, doseGapHours: 2, defaultCutoffHour: 5, description: "Two nighttime doses Â· no food within 2hr" },
-  xyrem: { id: "xyrem", name: "Xyrem", type: "oxybate", morningDose: false, hasFoodTimer: true, foodWaitHours: 2, hasNightDoses: true, doseGapHours: 2.5, defaultCutoffHour: 5, description: "Two nighttime doses Â· no food within 2hr" },
-  modafinil: { id: "modafinil", name: "Modafinil", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Morning stimulant Â· take early" },
-  armodafinil: { id: "armodafinil", name: "Armodafinil", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Morning stimulant Â· long acting" },
-  adderall: { id: "adderall", name: "Adderall", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Stimulant Â· morning and afternoon" },
-  vyvanse: { id: "vyvanse", name: "Vyvanse", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Long-acting stimulant Â· take in morning" },
-  sunosi: { id: "sunosi", name: "Sunosi", type: "wake_promoter", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Wake-promoting agent Â· once daily" },
-  wakix: { id: "wakix", name: "Wakix", type: "wake_promoter", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Non-stimulant Â· once daily" },
-  other: { id: "other", name: "Other", type: "custom", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Custom medication â€” configure your own" },
+  xywav: { id: "xywav", name: "Xywav", type: "oxybate", morningDose: false, hasFoodTimer: true, foodWaitHours: 2, hasNightDoses: true, doseGapHours: 2, defaultCutoffHour: 5, description: "Two nighttime doses - no food within 2hr" },
+  xyrem: { id: "xyrem", name: "Xyrem", type: "oxybate", morningDose: false, hasFoodTimer: true, foodWaitHours: 2, hasNightDoses: true, doseGapHours: 2.5, defaultCutoffHour: 5, description: "Two nighttime doses - no food within 2hr" },
+  modafinil: { id: "modafinil", name: "Modafinil", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Morning stimulant - take early" },
+  armodafinil: { id: "armodafinil", name: "Armodafinil", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Morning stimulant - long acting" },
+  adderall: { id: "adderall", name: "Adderall", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Stimulant - morning and afternoon" },
+  vyvanse: { id: "vyvanse", name: "Vyvanse", type: "stimulant", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Long-acting stimulant - take in morning" },
+  sunosi: { id: "sunosi", name: "Sunosi", type: "wake_promoter", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Wake-promoting agent - once daily" },
+  wakix: { id: "wakix", name: "Wakix", type: "wake_promoter", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Non-stimulant - once daily" },
+  other: { id: "other", name: "Other", type: "custom", morningDose: true, hasFoodTimer: false, hasNightDoses: false, description: "Custom medication - configure your own" },
 };
 
 const Icon = ({ name, size = 22 }) => {
@@ -47,7 +47,7 @@ const Icon = ({ name, size = 22 }) => {
   );
 };
 
-// â”€â”€â”€ SETUP / ONBOARDING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- SETUP / ONBOARDING ----------------------------------------------------
 function SetupScreen({ onComplete }) {
   // step 0 = pick presets (multi-select) + manage custom meds, step 1 = configure a custom med
   const [step, setStep] = useState(0);
@@ -100,7 +100,7 @@ function SetupScreen({ onComplete }) {
   return (
     <div className="setup-screen">
       <div className="setup-header">
-        <div className="setup-tag">SETUP {totalSelected > 0 && `Â· ${totalSelected} SELECTED`}</div>
+        <div className="setup-tag">SETUP {totalSelected > 0 && `- ${totalSelected} SELECTED`}</div>
         <h1 className="setup-title">
           {step === 0 ? "Which medications?" : "Configure your medication"}
         </h1>
@@ -120,7 +120,7 @@ function SetupScreen({ onComplete }) {
                 <button key={m.id} className={`med-option ${selected ? "selected multi-selected" : ""}`} onClick={() => togglePreset(m.id)}>
                   <div className="med-option-main">
                     <span className="med-option-name">
-                      {selected && <span className="check-pill">âœ“</span>}
+                      {selected && <span className="check-pill"><Icon name="check" size={12} /></span>}
                       {m.name}
                     </span>
                     <span className={`med-option-tag tag-${m.type}`}>{m.type.replace("_", " ")}</span>
@@ -134,7 +134,7 @@ function SetupScreen({ onComplete }) {
               <div key={m.instanceId} className="med-option selected multi-selected">
                 <div className="med-option-main">
                   <span className="med-option-name">
-                    <span className="check-pill">âœ“</span>
+                    <span className="check-pill"><Icon name="check" size={12} /></span>
                     {m.name}
                   </span>
                   <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
@@ -181,12 +181,12 @@ function SetupScreen({ onComplete }) {
           <button className="setup-btn" onClick={finishCustom}>
             Save Medication <Icon name="arrow" size={18} />
           </button>
-          <button className="back-btn" onClick={() => setStep(0)}>â† Back</button>
+          <button className="back-btn" onClick={() => setStep(0)}>- Back</button>
         </div>
       )}
 
       <p className="setup-disclaimer">
-        Always follow your prescribing doctor's instructions. Lepsy supports â€” it does not replace â€” medical advice.
+        Always follow your prescribing doctor's instructions. Lepsy supports - it does not replace - medical advice.
       </p>
     </div>
   );
@@ -213,17 +213,17 @@ const InlineSelect = ({ label, value, options, unit, onChange }) => (
   </div>
 );
 
-// â”€â”€â”€ HOME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- HOME ------------------------------------------------------------------
 function HomeScreen({ setScreen, medications, logEntries }) {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const todayLogs = logEntries.filter(e => new Date(e.time).toDateString() === new Date().toDateString());
-  const medNames = medications.map(m => m.name).join(" Â· ").toUpperCase();
+  const medNames = medications.map(m => m.name).join(" - ").toUpperCase();
 
   return (
     <div className="screen home-screen">
       <div className="home-header">
-        <div className="greeting-tag">LEPSY Â· {medNames}</div>
+        <div className="greeting-tag">LEPSY - {medNames}</div>
         <h1 className="greeting">{greeting}</h1>
         <p className="subtitle">Your daily companion</p>
       </div>
@@ -279,7 +279,7 @@ function HomeScreen({ setScreen, medications, logEntries }) {
   );
 }
 
-// â”€â”€â”€ EDIT TIMER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- EDIT TIMER MODAL ------------------------------------------------------
 function EditTimerModal({ timer, onSave, onClose, onDelete }) {
   const [hours, setHours] = useState(Math.floor((timer.remainingSeconds || 0) / 3600));
   const [minutes, setMinutes] = useState(Math.floor(((timer.remainingSeconds || 0) % 3600) / 60));
@@ -324,7 +324,7 @@ function EditTimerModal({ timer, onSave, onClose, onDelete }) {
   );
 }
 
-// â”€â”€â”€ ADD TIMER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- ADD TIMER MODAL -------------------------------------------------------
 function AddTimerModal({ onAdd, onClose, medications }) {
   // Detect if user is on an oxybate medication (Xywav or Xyrem) for stricter alcohol rules
   const hasOxybate = medications.some(m => m.type === "oxybate");
@@ -351,7 +351,7 @@ function AddTimerModal({ onAdd, onClose, medications }) {
       remainingSeconds: 0,
       active: false,
       drinkCount: 0,
-      // Strict mode = Xywav/Xyrem rules: 4hr â†’ 6hr â†’ exceeded after 3 drinks
+      // Strict mode = Xywav/Xyrem rules: 4hr - 6hr - exceeded after 3 drinks
       strictMode: isAlcoholStrict,
       drink1Hours: isAlcoholStrict ? 4 : hours,
       drink2Hours: isAlcoholStrict ? 6 : hours + 2,
@@ -394,7 +394,7 @@ function AddTimerModal({ onAdd, onClose, medications }) {
           <div style={{ marginTop: 16 }}>
             <ToggleRow
               title="Xywav/Xyrem safety rules"
-              desc="1 drink â†’ 4hr Â· 2 drinks â†’ 6hr Â· 3 drinks â†’ exceeded warning"
+              desc="1 drink - 4hr - 2 drinks - 6hr - 3 drinks - exceeded warning"
               value={strictMode}
               onChange={setStrictMode}
             />
@@ -421,7 +421,7 @@ function AddTimerModal({ onAdd, onClose, medications }) {
 
         {type === "alcohol" && strictMode && (
           <p className="modal-info">
-            âš ï¸ Xywav and Xyrem can interact dangerously with alcohol. After your 3rd drink, the timer will warn you not to take your medication tonight.
+            WARNING: Xywav and Xyrem can interact dangerously with alcohol. After your 3rd drink, the timer will warn you not to take your medication tonight.
           </p>
         )}
 
@@ -437,7 +437,7 @@ function AddTimerModal({ onAdd, onClose, medications }) {
   );
 }
 
-// â”€â”€â”€ MEDICATION SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- MEDICATION SCREEN -----------------------------------------------------
 function MedicationScreen({ medications, setMedications, medStates, setMedStates, customTimers, setCustomTimers, onManageMeds }) {
   const [editingTimer, setEditingTimer] = useState(null);
   const [showAddTimer, setShowAddTimer] = useState(false);
@@ -533,7 +533,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
       <div className="med-header-row">
         <div>
           <h2 className="screen-title">Medications</h2>
-          <p className="screen-sub">{medications.length} medication{medications.length !== 1 ? "s" : ""} Â· {customTimers.length} timer{customTimers.length !== 1 ? "s" : ""}</p>
+          <p className="screen-sub">{medications.length} medication{medications.length !== 1 ? "s" : ""} - {customTimers.length} timer{customTimers.length !== 1 ? "s" : ""}</p>
         </div>
         <button className="change-med-btn" onClick={onManageMeds}>
           <Icon name="settings" size={18} />
@@ -575,7 +575,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
             {med.hasFoodTimer && (
               <div className="med-card">
                 <div className="med-card-header">
-                  <span style={{ fontSize: 18 }}>ðŸ½</span>
+                  <Icon name="timer" size={18} />
                   <span>Food Timer</span>
                   {state.foodTimer > 0 && (
                     <button className="inline-edit-icon" onClick={() => setEditingTimer({
@@ -609,7 +609,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
                   <div className="dose-block">
                     <p className="dose-label">Dose 1</p>
                     {state.dose1Taken ? (
-                      <div className="taken-badge small">âœ“ {new Date(state.dose1Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                      <div className="taken-badge small"><Icon name="check" size={12} /> {new Date(state.dose1Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
                     ) : (
                       <button className="med-btn small" onClick={() => updateState(med.instanceId, { dose1Taken: true, dose1Time: new Date().toISOString(), dose1Elapsed: 0 })}>Tap when taken</button>
                     )}
@@ -621,7 +621,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
                       <div className={`elapsed-timer ${dose1Green ? "elapsed-green" : ""}`}>
                         {formatTime(state.dose1Elapsed || 0)}
                       </div>
-                      {dose1Green ? <p className="dose-sub green">âœ“ Dose 2 window open</p> : <p className="dose-sub">Wait {med.doseGapHours}hr</p>}
+                      {dose1Green ? <p className="dose-sub green">Dose 2 window open</p> : <p className="dose-sub">Wait {med.doseGapHours}hr</p>}
                     </div>
                   )}
                 </div>
@@ -631,7 +631,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
                     <div className="dose-block">
                       <p className="dose-label">Dose 2</p>
                       {pastCutoff ? (
-                        <div className="alert-badge small">â›” Past {String(cutoffHour).padStart(2, "0")}:00</div>
+                        <div className="alert-badge small">STOP: Past {String(cutoffHour).padStart(2, "0")}:00</div>
                       ) : (
                         <button className="med-btn small" onClick={() => updateState(med.instanceId, { dose2Taken: true, dose2Time: new Date().toISOString() })} disabled={!dose1Green}>
                           {dose1Green ? "Tap when taken" : "Not ready"}
@@ -648,7 +648,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
                 )}
 
                 {state.dose2Taken && (
-                  <div className="taken-badge" style={{ marginTop: 12 }}>âœ“ Dose 2 taken at {new Date(state.dose2Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                  <div className="taken-badge" style={{ marginTop: 12 }}><Icon name="check" size={14} /> Dose 2 taken at {new Date(state.dose2Time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
                 )}
               </div>
             )}
@@ -692,7 +692,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
 
               {timer.exceeded ? (
                 <div className="alert-badge" style={{ marginBottom: 14 }}>
-                  âš ï¸ Alcohol limit exceeded â€” do not take Xywav/Xyrem tonight
+                  WARNING: Alcohol limit exceeded - do not take Xywav/Xyrem tonight
                 </div>
               ) : (
                 <div className={`big-timer ${timer.remainingSeconds === 0 && timer.active ? "timer-done" : ""}`}>
@@ -706,10 +706,10 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
                     <p className="timer-sub">
                       {timer.strictMode
                         ? (timer.drinkCount === 0
-                            ? "Xywav/Xyrem rules: 1 drink â†’ 4hr Â· 2 drinks â†’ 6hr Â· 3 = stop"
-                            : `${timer.drinkCount} drink${timer.drinkCount > 1 ? "s" : ""} Â· ${timer.drinkCount === 1 ? timer.drink1Hours : timer.drink2Hours}hr timer`)
+                            ? "Xywav/Xyrem rules: 1 drink - 4hr - 2 drinks - 6hr - 3 = stop"
+                            : `${timer.drinkCount} drink${timer.drinkCount > 1 ? "s" : ""} - ${timer.drinkCount === 1 ? timer.drink1Hours : timer.drink2Hours}hr timer`)
                         : (timer.drinkCount === 0
-                            ? `Each drink adds ${timer.drinkHourIncrement}hr Â· first drink starts ${timer.durationSeconds / 3600}hr`
+                            ? `Each drink adds ${timer.drinkHourIncrement}hr - first drink starts ${timer.durationSeconds / 3600}hr`
                             : `${timer.drinkCount} drink${timer.drinkCount > 1 ? "s" : ""} logged`)}
                     </p>
                   )}
@@ -773,7 +773,7 @@ function MedicationScreen({ medications, setMedications, medStates, setMedStates
   );
 }
 
-// â”€â”€â”€ LOG SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- LOG SCREEN ------------------------------------------------------------
 function LogScreen({ logEntries, setLogEntries }) {
   const [type, setType] = useState("sleep_attack");
   const [notes, setNotes] = useState("");
@@ -809,7 +809,7 @@ function LogScreen({ logEntries, setLogEntries }) {
         ))}
       </div>
 
-      <p className="section-label">SEVERITY (1â€“5)</p>
+      <p className="section-label">SEVERITY (1-5)</p>
       <div className="severity-row">
         {[1, 2, 3, 4, 5].map(n => (
           <button key={n} className={`sev-btn ${severity === n ? "active" : ""}`} onClick={() => setSeverity(n)}>{n}</button>
@@ -848,7 +848,7 @@ function LogScreen({ logEntries, setLogEntries }) {
   );
 }
 
-// â”€â”€â”€ MEDICAL ID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- MEDICAL ID ------------------------------------------------------------
 function generateQRCode(text, size = 240) {
   const encoded = encodeURIComponent(text);
   return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encoded}&bgcolor=ffffff&color=0f172a&margin=2`;
@@ -905,7 +905,7 @@ function MedicalIDScreen({ medications }) {
 
       <div className="disclaimer">
         <strong style={{ color: "#cbd5e1" }}>How to make this useful in a real emergency:</strong><br /><br />
-        First responders won't open this app on a locked phone. Generate the QR code below and print it on a wallet card, bracelet, or sticker on your phone case. Anyone can scan it with their phone camera â€” no app required.
+        First responders won't open this app on a locked phone. Generate the QR code below and print it on a wallet card, bracelet, or sticker on your phone case. Anyone can scan it with their phone camera - no app required.
       </div>
 
       {!editing && !showQR && (
@@ -959,7 +959,7 @@ function MedicalIDScreen({ medications }) {
             Download QR Code
           </button>
           <button className="back-btn-medid" onClick={() => setShowQR(false)}>
-            â† Back to Medical ID
+            - Back to Medical ID
           </button>
         </div>
       )}
@@ -967,7 +967,7 @@ function MedicalIDScreen({ medications }) {
   );
 }
 
-// â”€â”€â”€ NAP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- NAP -------------------------------------------------------------------
 function NapScreen({ logEntries, setLogEntries }) {
   const [napStart, setNapStart] = useState(null);
   const [napElapsed, setNapElapsed] = useState(0);
@@ -998,16 +998,16 @@ function NapScreen({ logEntries, setLogEntries }) {
       <div className="nap-card">
         {!napStart ? (
           <>
-            <div className="nap-state-icon">ðŸŒ™</div>
+            <div className="nap-state-icon"><Icon name="moon" size={56} /></div>
             <p className="nap-state-text">{napSaved ? "Nap saved" : "Ready when you are"}</p>
             <button className="nap-btn start" onClick={startNap}>Start Nap</button>
           </>
         ) : (
           <>
-            <div className="nap-state-icon pulsing">ðŸ˜´</div>
+            <div className="nap-state-icon pulsing"><Icon name="moon" size={56} /></div>
             <p className="nap-state-text">Resting</p>
             <div className="nap-timer">{formatTime(napElapsed)}</div>
-            <p className="section-label" style={{ textAlign: "center", marginTop: 18 }}>HOW DO YOU FEEL? (1â€“5)</p>
+            <p className="section-label" style={{ textAlign: "center", marginTop: 18 }}>HOW DO YOU FEEL? (1-5)</p>
             <div className="severity-row" style={{ justifyContent: "center" }}>
               {[1, 2, 3, 4, 5].map(n => (
                 <button key={n} className={`sev-btn ${feeling === n ? "active" : ""}`} onClick={() => setFeeling(n)}>{n}</button>
@@ -1040,7 +1040,7 @@ function NapScreen({ logEntries, setLogEntries }) {
   );
 }
 
-// â”€â”€â”€ ROOT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- ROOT ------------------------------------------------------------------
 export default function App() {
   const [medications, setMedications] = useState(null);
   const [screen, setScreen] = useState("home");
